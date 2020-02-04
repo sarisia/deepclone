@@ -1,0 +1,8 @@
+.*
+!.gitignore
+!.github
+/bin/
+/deepclone
+/deepclone.exe
+/cmd/deepclone/*
+!/cmd/deepclone/main.go
