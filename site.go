@@ -5,11 +5,9 @@ import (
 	"golang.org/x/net/html"
 	"log"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
-	// "github.com/gorilla/css/scanner"
 )
 
 type Site struct {
@@ -112,14 +110,9 @@ func (s *Site) getReplace(fullurl *url.URL, kind Kind) (replace string) {
 
 func (s *Site) render(node *html.Node) {
 	full := filepath.FromSlash(getFullPath(s.URL, s.Kind))
-
-	if err := os.MkdirAll(filepath.Dir(full), 0777); err != nil {
-		log.Printf("Failed to create directories: %v\n", err)
-		return
-	}
-	f, err := os.Create(full)
+	f, err := openFile(full)
 	if err != nil {
-		log.Printf("Failed to create file: %v\n", err)
+		log.Printf("Failed to create %s: %v\n", full, err)
 		return
 	}
 	defer f.Close()

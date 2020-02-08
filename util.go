@@ -1,13 +1,16 @@
 package deepclone
 
 import (
-	"net/http"
+	"errors"
 	"log"
-	"strings"
-	"path"
-	"golang.org/x/net/html"
+	"net/http"
 	"net/url"
+	"os"
+	"path"
 	"path/filepath"
+	"strings"
+
+	"golang.org/x/net/html"
 )
 
 type Kind int
@@ -30,6 +33,8 @@ var extMap = map[string]Kind{
 	"html": HTML,
 	"htm": HTML,
 }
+
+var dir string
 
 func GetContentType(header *http.Header) (Kind, bool) {
 	ct := header.Get("Content-Type")
@@ -127,4 +132,23 @@ func GetReplacePath(base, target *url.URL, basekind, targkind Kind) (relative st
 func SetLoggerFlags() {
 	log.SetFlags(log.Ldate|log.Ltime|log.Lshortfile)
 	log.Println("Logger flag set")
+}
+
+func SetDirectory(d string) {
+	dir = d
+	log.Printf("content directory set to %s\n", dir)
+}
+
+func openFile(fullFilepath string) (*os.File, error) {
+	full := filepath.Join(dir, fullFilepath)
+	if err := os.MkdirAll(filepath.Dir(full), 0777); err != nil {
+		return nil, errors.New("failed to create directory")
+	}
+
+	f, err := os.Create(full)
+	if err != nil {
+		return nil, errors.New("failed to create file")
+	}
+
+	return f, nil
 }

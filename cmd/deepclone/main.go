@@ -16,6 +16,7 @@ func main() {
 	go debugRoutine()
 	depth := flag.Int("depth", 1, "fetch depth")
 	conns := flag.Int("conn", 16, "max concurrent connections")
+	dir := flag.String("dir", "", "directory to save contents")
 	flag.Parse()
 	url := flag.Arg(0)
 	if url == "" {
@@ -30,6 +31,8 @@ func main() {
 	// https://github.com/golang/go/issues/34941
 	// so comment out this
 	deepclone.SetMaxConnsPerHost(*conns)
+
+	deepclone.SetDirectory(*dir)
 
 	log.Println("Starting...")
 	log.Printf("Max concurrent connections: %d\n", *conns)

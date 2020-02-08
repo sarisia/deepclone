@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/url"
-	"os"
 	"path/filepath"
 	"sync"
 )
@@ -61,7 +60,7 @@ func (r *Resource) PerformResource(ctx context.Context, depth int) {
 		return
 	}
 
-	r.save(nil)
+	r.save()
 }
 
 func (r *Resource) get(ctx context.Context) error {
@@ -85,35 +84,20 @@ func (r *Resource) get(ctx context.Context) error {
 	return nil
 }
 
-func (r *Resource) save(buf []byte) {
+func (r *Resource) save() {
 	// make sure to close Response.Body here
 	full := filepath.FromSlash(getFullPath(r.URL, r.Kind))
-
-	// create base dir
-	if err := os.MkdirAll(filepath.Dir(full), 0777); err != nil {
-		log.Printf("Failed to create directory: %v\n", err)
-		return
-	}
-
-	f, err := os.Create(full)
+	f, err := openFile(full)
 	if err != nil {
-		log.Printf("Failed to create file: %v\n", err)
+		log.Printf("Failed to create %s: %v\n", full, err)
 		return
 	}
 	defer f.Close()
 
-	if buf != nil {
-		_, err = f.Write(buf)
-		if err != nil {
-			log.Printf("Failed to write buffer to file: %v\n", err)
-			return
-		}
-	} else {
-		_, err = io.Copy(f, r.Body)
-		if err != nil {
-			log.Printf("Failed to write to file: %v\n", err)
-			return
-		}
+	size, err := io.Copy(f, r.Body)
+	if err != nil {
+		log.Printf("Failed to write to file: %v\n", err)
+		return
 	}
-	log.Printf("Created %s\n", full)
+	log.Printf("Created %s: %d bytes\n", full, size)
 }

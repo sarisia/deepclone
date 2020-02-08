@@ -15,7 +15,7 @@ go get github.com/sarisia/deepclone/cmd/deepclone
 or build yourself
 
 ```
-./deepclone --depth 2 https://www.apple.co.jp
+./deepclone --dir content --depth 2 https://www.apple.co.jp
 ```
 
 ## Options
@@ -23,4 +23,5 @@ or build yourself
 | Option | Required | Default | Usage |
 |-|-|-|-|
 | depth | false | 1 | Set fetch depth |
-| conn | false | 10 | Set max concurrent connections |
+| conn | false | 16 | Set max concurrent connections |
+| dir | false | | Set directory to save contents |

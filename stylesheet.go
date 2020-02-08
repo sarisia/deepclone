@@ -8,9 +8,10 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"path/filepath"
 )
 
-var regURI *regexp.Regexp = regexp.MustCompile(`url\(['"](.+?)['"]\)`)
+var regURI *regexp.Regexp = regexp.MustCompile(`url\(['"]?(.+?)['"]?\)`)
 
 type Stylesheet struct {
 	*Resource
@@ -107,4 +108,22 @@ func (s *Stylesheet) recordResource(rawurl string) {
 
 	// record
 	s.resources = append(s.resources, NewResource(s.Parent, u, 0))
+}
+
+func (s *Stylesheet) save(buf []byte) {
+	full := filepath.FromSlash(getFullPath(s.URL, s.Kind))
+	f, err := openFile(full)
+	if err != nil {
+		log.Printf("Failed to create %s: %v\n", full, err)
+		return
+	}
+	defer f.Close()
+
+	size, err := f.Write(buf)
+	if err != nil {
+		log.Printf("Failed to write buffer to file: %v\n", err)
+		return
+	}
+
+	log.Printf("Rendered stylesheet %s: %d bytes\n", full, size)
 }
