@@ -1,12 +1,12 @@
 package deepclone
 
 import (
-	"path"
 	"bytes"
 	"context"
 	"io"
 	"log"
 	"net/url"
+	"path"
 	"path/filepath"
 	"sync"
 )
@@ -21,11 +21,11 @@ type Resource struct {
 	Body   *bytes.Buffer
 }
 
-func NewResource(parent *Site, u *url.URL, kind Kind) *Resource {
+func newResource(parent *Site, u *url.URL, kind Kind) *Resource {
 	return &Resource{parent, u, kind, nil}
 }
 
-func (r *Resource) PerformResource(ctx context.Context, depth int) {
+func (r *Resource) performResource(ctx context.Context, depth int) {
 	// ctx, cancel := context.WithTimeout(parent, 30*time.Second)
 	// defer cancel()
 
@@ -52,11 +52,11 @@ func (r *Resource) PerformResource(ctx context.Context, depth int) {
 	case HTML:
 		// switch to Site if Kind is HTML
 		s := NewSite(r)
-		s.PerformSite(ctx, depth)
+		s.performSite(ctx, depth)
 		return
 	case CSS:
 		ss := NewStylesheet(r)
-		ss.PerformStylesheet(ctx, depth)
+		ss.performStylesheet(ctx, depth)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (r *Resource) get(ctx context.Context) error {
 		ref = r.Parent.URL.String()
 	}
 
-	buf, kind, err := GetResource(ctx, r.URL.String(), ref)
+	buf, kind, err := getResource(ctx, r.URL.String(), ref)
 	if err != nil {
 		// log.Printf("Failed to get resource: %v\n", err)
 		return err

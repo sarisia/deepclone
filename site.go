@@ -2,12 +2,13 @@ package deepclone
 
 import (
 	"context"
-	"golang.org/x/net/html"
 	"log"
 	"net/url"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"golang.org/x/net/html"
 )
 
 type Site struct {
@@ -23,7 +24,7 @@ func NewSite(r *Resource) *Site {
 	return s
 }
 
-func (s *Site) PerformSite(ctx context.Context, depth int) {
+func (s *Site) performSite(ctx context.Context, depth int) {
 	if depth < 1 {
 		// log.Println("Max depth exceed. Stop.")
 		return
@@ -34,7 +35,7 @@ func (s *Site) PerformSite(ctx context.Context, depth int) {
 	s.wait.Add(len(s.resources))
 	for _, r := range s.resources {
 		go func(rr *Resource) {
-			rr.PerformResource(ctx, depth-1)
+			rr.performResource(ctx, depth-1)
 			s.wait.Done()
 		}(r)
 	}
@@ -98,14 +99,14 @@ func (s *Site) handleExternalResource(rawpath string, kind Kind) (replace string
 	// log.Printf("processing %s, raw: %s, resolved: %s\n", s.URL, rawpath, u)
 
 	// record
-	s.resources = append(s.resources, NewResource(s, fullurl, kind))
+	s.resources = append(s.resources, newResource(s, fullurl, kind))
 
 	// return replace path
 	return s.getReplace(fullurl, kind)
 }
 
 func (s *Site) getReplace(fullurl *url.URL, kind Kind) (replace string) {
-	return GetReplacePath(s.URL, fullurl, s.Kind, kind)
+	return getReplacePath(s.URL, fullurl, s.Kind, kind)
 }
 
 func (s *Site) render(node *html.Node) {

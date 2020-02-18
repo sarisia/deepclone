@@ -14,6 +14,7 @@ import (
 )
 
 type Kind int
+
 const (
 	// https://golang.org/ref/spec#Iota
 	// iota always starts from zero
@@ -26,17 +27,17 @@ const (
 
 var kindMap = map[string]Kind{
 	"text/html": HTML,
-	"text/css": CSS,
+	"text/css":  CSS,
 }
 var extMap = map[string]Kind{
-	"css": CSS,
+	"css":  CSS,
 	"html": HTML,
-	"htm": HTML,
+	"htm":  HTML,
 }
 
 var dir string
 
-func GetContentType(header *http.Header) (Kind, bool) {
+func getContentType(header *http.Header) (Kind, bool) {
 	ct := header.Get("Content-Type")
 	if ct == "" {
 		return Unknown, false
@@ -51,9 +52,9 @@ func GetContentType(header *http.Header) (Kind, bool) {
 	return Any, true
 }
 
-func GetExtensionType(url string) Kind {
+func getExtensionType(url string) Kind {
 	ext := path.Ext(path.Clean(url))
-	
+
 	if k, ok := extMap[ext]; ok {
 		return k
 	} else {
@@ -73,12 +74,12 @@ func getFullPath(u *url.URL, kind Kind) (full string) {
 	// fuck.com/yes.shit/ <- possible, but gaiji
 	// -> which has suffix "/" is always Site
 	// -> no Path or Path does not have ext is Site
-	
+
 	// fuck apple.com
 	// https://www.apple.com/wss/fonts?families=SF+Pro,v2|SF+Pro+Icons,v1
 	// DO NOT have extension but it's CSS!
 	if strings.HasSuffix(full, "/") || u.Path == "" || path.Ext(u.Path) == "" {
-		switch (kind) {
+		switch kind {
 		case CSS:
 			if path.Base(u.Path) == "." || path.Base(u.Path) == "/" {
 				full = path.Join(full, "stylesheet.css")
@@ -94,7 +95,7 @@ func getFullPath(u *url.URL, kind Kind) (full string) {
 
 func getStylesheetResource(attrs []html.Attribute) (pos int, ok bool) {
 	for i, a := range attrs {
-		switch (a.Key) {
+		switch a.Key {
 		case "rel":
 			ok = a.Val == "stylesheet"
 		case "href":
@@ -104,7 +105,7 @@ func getStylesheetResource(attrs []html.Attribute) (pos int, ok bool) {
 	return
 }
 
-func GetReplacePath(base, target *url.URL, basekind, targkind Kind) (relative string) {
+func getReplacePath(base, target *url.URL, basekind, targkind Kind) (relative string) {
 	// Absolute path means cross domain href
 	// we need to replace abs to rel in order to make clone page
 	// works if the cache location is changed
@@ -125,12 +126,12 @@ func GetReplacePath(base, target *url.URL, basekind, targkind Kind) (relative st
 
 	relative = filepath.ToSlash(rel)
 	// log.Printf("rel %s relpath %s\n", rel, relpath)
-	
+
 	return
 }
 
 func SetLoggerFlags() {
-	log.SetFlags(log.Ldate|log.Ltime|log.Lshortfile)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("Logger flag set")
 }
 

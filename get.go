@@ -1,12 +1,12 @@
 package deepclone
 
 import (
+	"bytes"
+	"context"
+	"io"
+	"log"
 	"net/http"
 	"strings"
-	"bytes"
-	"io"
-	"context"
-	"log"
 	"time"
 )
 
@@ -21,8 +21,8 @@ func SetMaxConnsPerHost(limit int) {
 	log.Printf("MaxConnsPerHost set to %d\n", limit)
 }
 
-func GetResource(ctx context.Context, url, referer string) (buf *bytes.Buffer, kind Kind, err error) {
-	limit<- struct{}{}
+func getResource(ctx context.Context, url, referer string) (buf *bytes.Buffer, kind Kind, err error) {
+	limit <- struct{}{}
 	defer func() {
 		<-limit
 	}()
@@ -52,9 +52,9 @@ func GetResource(ctx context.Context, url, referer string) (buf *bytes.Buffer, k
 	buf = bytes.NewBuffer(nil)
 	io.Copy(buf, resp.Body)
 
-	kind, ok := GetContentType(&resp.Header)
+	kind, ok := getContentType(&resp.Header)
 	if !ok {
-		kind = GetExtensionType(url)
+		kind = getExtensionType(url)
 	}
 
 	return

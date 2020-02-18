@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/url"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
-	"path/filepath"
 )
 
 var regURI *regexp.Regexp = regexp.MustCompile(`url\(['"]?(.+?)['"]?\)`)
@@ -28,13 +28,13 @@ func NewStylesheet(r *Resource) *Stylesheet {
 	return s
 }
 
-func (s *Stylesheet) PerformStylesheet(ctx context.Context, depth int) {
+func (s *Stylesheet) performStylesheet(ctx context.Context, depth int) {
 	s.parseCSS()
 
 	s.wait.Add(len(s.resources))
 	for _, r := range s.resources {
 		go func(rr *Resource) {
-			rr.PerformResource(ctx, depth) // CSS don't consume depth
+			rr.performResource(ctx, depth) // CSS don't consume depth
 			s.wait.Done()
 		}(r)
 	}
@@ -64,7 +64,7 @@ func (s *Stylesheet) parseCSS() {
 			}
 			ur = s.URL.ResolveReference(ur)
 			log.Println(ur.String())
-			bufstr = strings.Replace(bufstr, u[1], GetReplacePath(s.URL, ur, s.Kind, Any), 1)
+			bufstr = strings.Replace(bufstr, u[1], getReplacePath(s.URL, ur, s.Kind, Any), 1)
 		}
 	}
 
@@ -107,7 +107,7 @@ func (s *Stylesheet) recordResource(rawurl string) {
 	// log.Printf("processing %s, raw: %s, resolved: %s\n", s.URL, rawurl, u)
 
 	// record
-	s.resources = append(s.resources, NewResource(s.Parent, u, 0))
+	s.resources = append(s.resources, newResource(s.Parent, u, 0))
 }
 
 func (s *Stylesheet) save(buf []byte) {
