@@ -3,25 +3,30 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/sarisia/deepclone"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/sarisia/deepclone"
 )
 
 func main() {
-	go debugRoutine()
 	depth := flag.Int("depth", 1, "fetch depth")
 	conns := flag.Int("conn", 16, "max concurrent connections")
 	dir := flag.String("dir", "", "directory to save contents")
+	debug := flag.Bool("debug", false, "enable pprof debug endpoint")
 	flag.Parse()
 	url := flag.Arg(0)
 	if url == "" {
 		log.Println("No URL is provided.")
 		return
+	}
+
+	if *debug {
+		go debugRoutine()
 	}
 
 	start := time.Now()
@@ -64,5 +69,6 @@ Finish:
 }
 
 func debugRoutine() {
+	log.Println("pprof debug endpoint: localhost:6611")
 	log.Println(http.ListenAndServe("localhost:6611", nil))
 }
