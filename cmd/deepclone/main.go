@@ -16,7 +16,7 @@ import (
 func main() {
 	depth := flag.Int("depth", 1, "fetch depth")
 	conns := flag.Int("conn", 16, "max concurrent connections")
-	dir := flag.String("dir", "", "directory to save contents")
+	dir := flag.String("dir", "content", "directory to save contents")
 	debug := flag.Bool("debug", false, "enable pprof debug endpoint")
 	flag.Parse()
 	url := flag.Arg(0)
