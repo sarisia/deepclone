@@ -34,6 +34,9 @@ func getResource(ctx context.Context, url, referer string) (buf *bytes.Buffer, k
 		return
 	}
 
+	// User Agent!
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36")
+
 	if referer != "" {
 		if !strings.HasSuffix(referer, "/") {
 			referer += "/"
