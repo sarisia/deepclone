@@ -1,6 +1,7 @@
 # Deepclone
 
-[![ci](https://github.com/sarisia/deepclone/workflows/ci/badge.svg)](https://github.com/sarisia/deepclone/actions)
+[![test](https://github.com/sarisia/deepclone/workflows/test/badge.svg)](https://github.com/sarisia/deepclone/actions)
+[![build](https://github.com/sarisia/deepclone/workflows/build/badge.svg)](https://github.com/sarisia/deepclone/actions)
 [![release](https://github.com/sarisia/deepclone/workflows/release/badge.svg)](https://github.com/sarisia/deepclone/releases)
 
 [DevNote here](https://www.notion.so/sarisia/Deepclone-Devnote-773cf2f403914b9d83910b40a533ba0d)

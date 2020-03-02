@@ -1,0 +1,29 @@
+name: test
+on:
+  push:
+    branches:
+    - '**'
+    tags-ignore: 
+    - '**'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-go@v1
+      with:
+        go-version: 1.13.x
+    - run: mkdir bin
+    - name: test
+      run: go test
+    - name: discord notify
+      if: always()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: ${{ job.status }}
+        job: deepclone - test
