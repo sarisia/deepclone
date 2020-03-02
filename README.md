@@ -12,7 +12,7 @@
 or build yourself
 
 ```
-./deepclone --dir content --depth 2 https://www.apple.co.jp
+./deepclone --depth 2 https://www.apple.com/jp/
 ```
 
 ## Build
