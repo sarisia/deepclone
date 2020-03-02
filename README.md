@@ -3,11 +3,7 @@
 [![ci](https://github.com/sarisia/deepclone/workflows/ci/badge.svg)](https://github.com/sarisia/deepclone/actions)
 [![release](https://github.com/sarisia/deepclone/workflows/release/badge.svg)](https://github.com/sarisia/deepclone/releases)
 
-## Build
-
-```
-go get github.com/sarisia/deepclone/cmd/deepclone
-```
+[DevNote here](https://www.notion.so/sarisia/Deepclone-Devnote-773cf2f403914b9d83910b40a533ba0d)
 
 ## Run
 
@@ -18,10 +14,17 @@ or build yourself
 ./deepclone --dir content --depth 2 https://www.apple.co.jp
 ```
 
+## Build
+
+```
+go get github.com/sarisia/deepclone/cmd/deepclone
+```
+
 ## Options
 
 | Option | Required | Default | Usage |
 |-|-|-|-|
-| depth | false | 1 | Set fetch depth |
-| conn | false | 16 | Set max concurrent connections |
-| dir | false | | Set directory to save contents |
+| depth | | 1 | Set fetch depth |
+| conn | | 16 | Set max concurrent connections |
+| dir | | "content" | Set directory to save contents |
+| debug | | false | Enable pprof debug endpoint |
