@@ -15,13 +15,13 @@ var cached = map[string]struct{}{}
 var cachedLock = sync.RWMutex{}
 
 type Resource struct {
-	Parent *Site
+	Parent string
 	URL    *url.URL
 	Kind   Kind
 	Body   *bytes.Buffer
 }
 
-func newResource(parent *Site, u *url.URL, kind Kind) *Resource {
+func newResource(parent string, u *url.URL, kind Kind) *Resource {
 	return &Resource{parent, u, kind, nil}
 }
 
@@ -65,12 +65,7 @@ func (r *Resource) performResource(ctx context.Context, depth int) {
 
 func (r *Resource) get(ctx context.Context) error {
 	// set referer if Resource has Parent Site
-	var ref string
-	if r.Parent != nil {
-		ref = r.Parent.URL.String()
-	}
-
-	buf, kind, err := getResource(ctx, r.URL.String(), ref)
+	buf, kind, err := getResource(ctx, r.URL.String(), r.Parent)
 	if err != nil {
 		// log.Printf("Failed to get resource: %v\n", err)
 		return err

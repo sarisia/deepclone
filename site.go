@@ -99,7 +99,7 @@ func (s *Site) handleExternalResource(rawpath string, kind Kind) (replace string
 	// log.Printf("processing %s, raw: %s, resolved: %s\n", s.URL, rawpath, u)
 
 	// record
-	s.resources = append(s.resources, newResource(s, fullurl, kind))
+	s.resources = append(s.resources, newResource(s.URL.String(), fullurl, kind))
 
 	// return replace path
 	return s.getReplace(fullurl, kind)
