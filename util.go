@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"unicode"
 
 	"golang.org/x/net/html"
 )
@@ -57,9 +58,9 @@ func getExtensionType(url string) Kind {
 
 	if k, ok := extMap[ext]; ok {
 		return k
-	} else {
-		return Any
 	}
+
+	return Any
 }
 
 func getFullPath(u *url.URL, kind Kind) (full string) {
@@ -90,7 +91,36 @@ func getFullPath(u *url.URL, kind Kind) (full string) {
 			full = path.Join(full, "index.html")
 		}
 	}
+
+	d, f := path.Split(full)
+	fext := path.Ext(f)
+	fbase := strings.TrimSuffix(f, fext)
+	sq := toFsSafeString(u.RawQuery)
+	if sq != "" {
+		sq = "-" + sq
+	}
+	full = path.Join(d, fbase+sq+fext)
 	return
+}
+
+func toFsSafeString(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			if _, err := b.WriteRune(r); err != nil {
+				log.Printf("WriteRune failed: %v\n", err)
+				return ""
+			}
+		} else {
+			if _, err := b.WriteString("-"); err != nil {
+				log.Printf("WriteString failed: %v\n", err)
+				return ""
+			}
+		}
+	}
+
+	return b.String()
 }
 
 func getStylesheetResource(attrs []html.Attribute) (pos int, ok bool) {
