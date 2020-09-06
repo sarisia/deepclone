@@ -67,16 +67,16 @@ func getFullPath(u *url.URL, kind Kind) (full string) {
 	full = path.Join(u.Hostname(), u.Path)
 
 	// need to determine urls below as Site
-	// fuck.com
-	// fuck.com/
-	// fuck.com/shit
-	// fuck.com/shit/
-	// fuck.com/yes.shit <- rare case, seems replaced automatically by modern server
-	// fuck.com/yes.shit/ <- possible, but gaiji
+	// hoge.com
+	// hoge.com/
+	// hoge.com/fuga
+	// hoge.com/fuga/
+	// hoge.com/yes.fuga <- rare case, seems replaced automatically by modern server
+	// hoge.com/yes.fuga/ <- possible, but gaiji
 	// -> which has suffix "/" is always Site
 	// -> no Path or Path does not have ext is Site
 
-	// fuck apple.com
+	// omg apple.com
 	// https://www.apple.com/wss/fonts?families=SF+Pro,v2|SF+Pro+Icons,v1
 	// DO NOT have extension but it's CSS!
 	if strings.HasSuffix(full, "/") || u.Path == "" || path.Ext(u.Path) == "" {

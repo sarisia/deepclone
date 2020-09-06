@@ -34,7 +34,7 @@ func main() {
 
 	// this will fuck the app and it is golang's bug
 	// https://github.com/golang/go/issues/34941
-	// so comment out this
+	// so comment out this in 1.13 or lower
 	deepclone.SetMaxConnsPerHost(*conns)
 
 	deepclone.SetDirectory(*dir)
